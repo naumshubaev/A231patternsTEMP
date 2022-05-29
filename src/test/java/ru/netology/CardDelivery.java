@@ -50,7 +50,7 @@ public class CardDelivery {
         System.out.println(deliveryDate());
 //        System.out.println(phoneF);
 
-        Configuration.headless = false;
+        Configuration.headless = true;
         Configuration.holdBrowserOpen = false;
         // fastSetValue - I have no idea what it is)))
 //        Configuration.fastSetValue = true;
@@ -68,11 +68,11 @@ public class CardDelivery {
                         , Duration.ofSeconds(15));
 //        $x( "//*[text()='Встреча успешно запланирована на']")
 // при повторном нажатии появляется всплывающее окно с корректным текстом, но Селенид его не находит
-//        $$("button").find(exactText("Запланировать")).click();
+        $$("button").find(exactText("Запланировать")).click();
 //////          $("[data-test-id='replan-notification']")
-//        $x("[//*[@id=\"root\"]/div/div[2]/div[3]]")
-//                .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?")
-//                        , Duration.ofSeconds(15));
+        $x("[//*[@id=\"root\"]/div/div[2]/div[3]]")
+                .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?")
+                        , Duration.ofSeconds(15));
 
     }
 }
