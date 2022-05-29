@@ -1,0 +1,2 @@
+**Домашнее задание 2.3 часть 1 с лекции «Patterns»**
+[![Build status](https://ci.appveyor.com/api/projects/status/uxj3o7f268mx4wxb?svg=true)](https://ci.appveyor.com/project/naumshubaev/a231patternstemp)
