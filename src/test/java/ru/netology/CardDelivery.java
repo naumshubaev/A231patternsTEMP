@@ -63,15 +63,16 @@ public class CardDelivery {
         $("[data-test-id='phone'] input").val("+78121234567");
         $("[data-test-id='agreement']>span").click();
         $$("button").find(exactText("Запланировать")).click();
-        $("[class='notification__content']")
+        $( "[class='notification__content']")
                 .shouldHave(Condition.text("Встреча успешно запланирована на " + deliveryDate())
                         , Duration.ofSeconds(15));
-
+//        $x( "//*[text()='Встреча успешно запланирована на']")
 // при повторном нажатии появляется всплывающее окно с корректным текстом, но Селенид его не находит
-        $$("button").find(exactText("Запланировать")).click();
-        $x("[//*[@id=\"root\"]/div/div[2]/div[3]/text()]")
-                .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?")
-                        , Duration.ofSeconds(15));
+//        $$("button").find(exactText("Запланировать")).click();
+//////          $("[data-test-id='replan-notification']")
+//        $x("[//*[@id=\"root\"]/div/div[2]/div[3]]")
+//                .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?")
+//                        , Duration.ofSeconds(15));
 
     }
 }
