@@ -58,6 +58,7 @@ public class CardDelivery {
 
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Москва");
+// THE DATE is already there
 //        $("[data-test-id='date'] input").doubleClick().sendKeys(deliveryDate());
         $("[data-test-id='name'] input").setValue("Василий Пупкин");
         $("[data-test-id='phone'] input").val("+78121234567");
@@ -66,13 +67,9 @@ public class CardDelivery {
         $( "[class='notification__content']")
                 .shouldHave(Condition.text("Встреча успешно запланирована на " + deliveryDate())
                         , Duration.ofSeconds(15));
-//        $x( "//*[text()='Встреча успешно запланирована на']")
-// при повторном нажатии появляется всплывающее окно с корректным текстом, но Селенид его не находит
         $$("button").find(exactText("Запланировать")).click();
-//////          $("[data-test-id='replan-notification']")
-        $x("[//*[@id=\"root\"]/div/div[2]/div[3]]")
+          $("[data-test-id='replan-notification']")
                 .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?")
                         , Duration.ofSeconds(15));
-
     }
 }
