@@ -2,74 +2,95 @@ package ru.netology;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import com.github.javafaker.Faker;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
 
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.open;
+import static ru.netology.DataGenerator.*;
 
 
 public class CardDelivery {
 
-    private Faker faker;
-
-    @BeforeEach
-    void setUpAll() {
-        faker = new Faker(new Locale("ru"));
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
     }
 
-    String deliveryDate() {
-        // deliveryDate == today+daysAdded
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-// RANDOM will not work for the first click actually
-        int daysAdded = 3;
-                // for Random: ThreadLocalRandom.current().nextInt(3, 20);
+    @BeforeEach
+    void setUp() {
+        Configuration.headless = false;
+        Configuration.holdBrowserOpen = true;
+        open("http://localhost:9999");
+        }
 
-        return today.plusDays(daysAdded).format(dtf);
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
     }
 
     @Test
-    public void shouldOrderCardDelivery() {
+    public void shouldNotMakeAnAppointment() {
 
-        String name = faker.name().fullName();
-        String phone = faker.phoneNumber().subscriberNumber(10); //test: should be 10
-        // another option for temporary workaround - the region code problem still exists
- //       String phoneF = faker.numerify("##########");
-// move faker to utility class
-            // just for visualisation
-        System.out.println(name);
-        System.out.println(phone);
-        System.out.println(deliveryDate());
-//        System.out.println(phoneF);
-
-        Configuration.headless = true;
-        Configuration.holdBrowserOpen = false;
-        // fastSetValue - I have no idea what it is)))
-//        Configuration.fastSetValue = true;
-        open("http://localhost:9999");
-
-        open("http://localhost:9999");
+        String originalDate = deliveryDate();
         $("[data-test-id='city'] input").setValue("Москва");
-// THE DATE is already there
-//        $("[data-test-id='date'] input").doubleClick().sendKeys(deliveryDate());
-        $("[data-test-id='name'] input").setValue("Василий Пупкин");
-        $("[data-test-id='phone'] input").val("+78121234567");
-        $("[data-test-id='agreement']>span").click();
-        $$("button").find(exactText("Запланировать")).click();
-        $( "[class='notification__content']")
-                .shouldHave(Condition.text("Встреча успешно запланирована на " + deliveryDate())
+        $("[data-test-id='date'] input").sendKeys((Keys.chord(Keys.CONTROL,"a",Keys.DELETE)));
+        $("[data-test-id='date'] input").setValue(originalDate);
+        $("[data-test-id='name'] input").setValue(name());
+        $("[data-test-id='phone'] input").setValue("+78125944567");
+        $("[data-test-id='agreement']").click(); //>span ?????
+        $(byText("Запланировать")).click();
+        $(byText("Успешно!")).shouldBe(visible, Duration.ofSeconds(15));
+        $( "[data-test-id=success-notification] .notification__content").shouldBe(visible)
+                .shouldHave(Condition.text("Встреча успешно запланирована на " + originalDate)
                         , Duration.ofSeconds(15));
-        $$("button").find(exactText("Запланировать")).click();
-          $("[data-test-id='replan-notification']")
+
+        String editedDate = deliveryDate();
+        $("[data-test-id='date'] input").sendKeys((Keys.chord(Keys.CONTROL,"a",Keys.DELETE)));
+        $("[data-test-id='date'] input").setValue(editedDate);
+        $(byText("Запланировать")).click();
+        $( "[data-test-id=replan-notification] .notification__content").shouldBe(visible)
                 .shouldHave(Condition.text("У вас уже запланирована встреча на другую дату. Перепланировать?")
                         , Duration.ofSeconds(15));
+
+        $(byText("Перепланировать")).click();
+        $( "[data-test-id=success-notification] .notification__content").shouldBe(visible)
+                .shouldHave(Condition.text("Встреча успешно запланирована на " + editedDate)
+                        , Duration.ofSeconds(15));
+
+    }
+
+    @Test
+    public void shouldNotMakeAnAppointmentSameDate() {
+
+        String originalDate = deliveryDate();
+        $("[data-test-id='city'] input").setValue("Москва");
+        $("[data-test-id='date'] input").sendKeys((Keys.chord(Keys.CONTROL,"a",Keys.DELETE)));
+        $("[data-test-id='date'] input").setValue(originalDate);
+        $("[data-test-id='name'] input").setValue(name());
+        $("[data-test-id='phone'] input").setValue("+78125944567");
+        $("[data-test-id='agreement']").click(); //>span ?????
+        $(byText("Запланировать")).click();
+        $(byText("Успешно!")).shouldBe(visible, Duration.ofSeconds(15));
+        $( "[data-test-id=success-notification] .notification__content").shouldBe(visible)
+                .shouldHave(Condition.text("Встреча успешно запланирована на " + originalDate)
+                        , Duration.ofSeconds(15));
+
+        $("[data-test-id='date'] input").sendKeys((Keys.chord(Keys.CONTROL,"a",Keys.DELETE)));
+        $("[data-test-id='date'] input").setValue(originalDate);
+        $(byText("Запланировать")).click();
+        $( "[data-test-id=replan-notification] .notification__content").shouldBe(visible)
+                .shouldHave(Condition.text("У вас уже запланирована встреча на эту дату.")
+                        , Duration.ofSeconds(15));
+
     }
 }
