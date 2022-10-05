@@ -28,8 +28,8 @@ public class CardDelivery {
 
     @BeforeEach
     void setUp() {
-        Configuration.headless = false;
-        Configuration.holdBrowserOpen = true;
+        Configuration.headless = true;
+        Configuration.holdBrowserOpen = false;
         open("http://localhost:9999");
         }
 
@@ -39,7 +39,7 @@ public class CardDelivery {
     }
 
     @Test
-    public void shouldNotMakeAnAppointment() {
+    public void shouldMakeAnAppointmentAndChangeTheDate() {
 
         String originalDate = deliveryDate();
         $("[data-test-id='city'] input").setValue("Москва");
