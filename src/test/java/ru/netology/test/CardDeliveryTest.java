@@ -27,8 +27,8 @@ public class CardDeliveryTest {
 
     @BeforeEach
     void setUp() {
-        Configuration.headless = false;
-        Configuration.holdBrowserOpen = true;
+        Configuration.headless = true;
+        Configuration.holdBrowserOpen = false;
         open("http://localhost:9999");
     }
 
