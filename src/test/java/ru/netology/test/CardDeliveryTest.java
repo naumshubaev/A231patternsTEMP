@@ -87,7 +87,7 @@ public class CardDeliveryTest {
         $("[data-test-id='date'] input").setValue(originalDate);
         $(byText("Запланировать")).click();
         $( "[data-test-id=replan-notification] .notification__content").shouldBe(visible)
-                .shouldHave(Condition.text("У вас уже запланирована встреча на эту дату.")
+                .shouldHave(Condition.text("У вас уже запланирована встреча на эту дату")
                         , Duration.ofSeconds(15));
     }
 
@@ -109,7 +109,7 @@ public class CardDeliveryTest {
 
         $(byText("Запланировать")).click();
         $( "[data-test-id=replan-notification] .notification__content").shouldBe(visible)
-                .shouldHave(Condition.text("У вас уже запланирована встреча на эту дату.")
+                .shouldHave(Condition.text("У вас уже запланирована встреча на эту дату")
                         , Duration.ofSeconds(15));
     }
 }
